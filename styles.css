@@ -165,9 +165,16 @@ p { margin-top: 0; }
 
 .install-label span:first-child { color: var(--signal-dark); font-weight: 800; }
 
+.install-methods { display: flex; flex-wrap: wrap; padding: 0 8px; border-bottom: 1px solid var(--rule); }
+.install-methods[hidden] { display: none; }
+.install-methods button { min-height: 44px; padding: 10px 12px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: var(--mono); font-size: 0.75rem; color: var(--muted); cursor: pointer; }
+.install-methods button:hover { color: var(--ink); }
+.install-methods button[aria-pressed="true"] { color: var(--signal-dark); border-bottom-color: var(--signal-dark); font-weight: 800; }
+.install-requirements { max-width: 65ch; margin: 12px 0 0; color: var(--muted); font-size: 1rem; }
+
 .install-command { min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0 20px; }
 
-.install-command code { font-family: var(--mono); font-size: clamp(1rem, 1.4vw, 1.25rem); }
+.install-command code { min-width: 0; padding-block: 16px; overflow-wrap: anywhere; font-family: var(--mono); font-size: clamp(1rem, 1.4vw, 1.25rem); }
 
 .copy-button {
   display: inline-flex;
@@ -190,6 +197,7 @@ p { margin-top: 0; }
 .copy-button:hover { color: var(--signal-dark); }
 .copy-button.is-copied { color: var(--signal-dark); }
 .copy-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.copy-status.is-error { position: static; display: block; width: auto; height: auto; clip: auto; padding: 0 20px 16px; color: var(--signal-dark); }
 
 .launch-note { margin: 16px 0 0; color: var(--muted); font-size: 0.98rem; }
 .launch-note code { color: var(--ink); font-family: var(--mono); font-weight: 700; }
