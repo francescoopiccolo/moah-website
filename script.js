@@ -19,9 +19,7 @@ if (button && methods) {
     for (const option of methods.querySelectorAll('button')) {
       option.setAttribute('aria-pressed', String(option === method));
     }
-    document.querySelector('#install-method').textContent = method.dataset.method;
     document.querySelector('#install-code').textContent = method.dataset.command;
-    document.querySelector('#install-requirements').textContent = method.dataset.requirements;
     button.dataset.copy = method.dataset.command;
     button.setAttribute('aria-label', `Copy ${method.dataset.method} install command`);
   });
