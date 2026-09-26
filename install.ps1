@@ -4,7 +4,7 @@ function Install-MoAH {
     if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
         throw 'Node.js >=22.19 is required. Install Node.js LTS from https://nodejs.org and run this installer again.'
     }
-    & node -e 'const [major,minor] = process.versions.node.split(".").map(Number); process.exit(major > 22 || (major === 22 && minor >= 19) ? 0 : 1)'
+    & node -e 'const [major,minor] = process.versions.node.split(String.fromCharCode(46)).map(Number); process.exit(major > 22 || (major === 22 && minor >= 19) ? 0 : 1)'
     if ($LASTEXITCODE -ne 0) { throw 'Node.js >=22.19 is required. Update Node.js and try again.' }
     $npmCommand = Get-Command npm.cmd -ErrorAction SilentlyContinue
     if (-not $npmCommand) { throw 'npm is required. Install Node.js LTS with npm from https://nodejs.org.' }

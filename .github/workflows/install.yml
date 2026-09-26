@@ -28,6 +28,9 @@ jobs:
         run: |
           sh -n install.sh
           sh install.sh
+          mkdir "$RUNNER_TEMP/shell-project"
+          cd "$RUNNER_TEMP/shell-project"
+          "$MOAH_INSTALL_DIR/bin/moah" init
           "$MOAH_INSTALL_DIR/bin/moah" pi --help
       - name: PowerShell installer
         if: runner.os == 'Windows'
@@ -37,4 +40,7 @@ jobs:
           MOAH_NO_PATH_UPDATE: '1'
         run: |
           ./install.ps1
+          New-Item -ItemType Directory "$env:RUNNER_TEMP\powershell-project" | Out-Null
+          Set-Location "$env:RUNNER_TEMP\powershell-project"
+          & "$env:MOAH_INSTALL_DIR\moah.cmd" init
           & "$env:MOAH_INSTALL_DIR\moah.cmd" pi --help
