@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '24'
       - uses: oven-sh/setup-bun@v2
-      - run: npm install -g pnpm@10
+      - run: npm install -g pnpm@12.6.0
       - run: node tests/install-smoke.mjs
       - name: Shell installer
         if: runner.os != 'Windows'

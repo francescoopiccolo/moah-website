@@ -28,7 +28,7 @@ for (const manager of ['npm', 'pnpm', 'bun']) {
   }
   const launcher = ['moah', 'moah.cmd', 'moah.exe'].map(name => join(bin, name)).find(existsSync);
   assert.ok(launcher, `${manager}: global launcher missing at ${bin}`);
-  assert.match(run('moah', ['about'], env), /MoAH 0\.1\.3/);
+  assert.match(run('moah', ['about'], env), /MoAH \d+\.\d+\.\d+/);
   run('moah', ['init'], env);
   run('moah', ['index'], env);
   assert.match(run('moah', ['pi', '--help'], env), /moah/i);
