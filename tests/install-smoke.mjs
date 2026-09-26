@@ -12,6 +12,9 @@ function run(command, args, env = process.env) {
   if (result.error || result.status !== 0) throw Error(`${command} failed: ${result.error ?? result.status}\n${result.stdout}\n${result.stderr}`);
   return result.stdout;
 }
+project = root;
+const version = run('npm', ['view', 'moah-ai', 'version']).trim();
+assert.match(version, /^\d+\.\d+\.\d+$/);
 for (const manager of ['npm', 'pnpm', 'bun']) {
   project = join(root, `${manager}-project`);
   mkdirSync(project);
@@ -20,7 +23,7 @@ for (const manager of ['npm', 'pnpm', 'bun']) {
   mkdirSync(bin, { recursive: true });
   const env = { ...process.env, PATH: `${bin}${win ? ';' : ':'}${process.env.PATH}` };
   if (manager === 'npm') run('npm', ['install', '-g', '--prefix', prefix, '--no-audit', '--no-fund', 'moah-ai@latest'], env);
-  if (manager === 'pnpm') run('pnpm', ['add', '-g', '--global-dir', join(prefix, 'global'), '--global-bin-dir', bin, 'moah-ai@latest'], env);
+  if (manager === 'pnpm') run('pnpm', ['add', '-g', '--global-dir', join(prefix, 'global'), '--global-bin-dir', bin, '--store-dir', join(prefix, 'store'), `moah-ai@${version}`], env);
   if (manager === 'bun') {
     env.BUN_INSTALL_GLOBAL_DIR = join(prefix, 'global');
     env.BUN_INSTALL_BIN = bin;
@@ -28,7 +31,7 @@ for (const manager of ['npm', 'pnpm', 'bun']) {
   }
   const launcher = ['moah', 'moah.cmd', 'moah.exe'].map(name => join(bin, name)).find(existsSync);
   assert.ok(launcher, `${manager}: global launcher missing at ${bin}`);
-  assert.match(run('moah', ['about'], env), /MoAH \d+\.\d+\.\d+/);
+  assert.ok(run('moah', ['about'], env).includes(`MoAH ${version}`), `${manager}: wrong installed version`);
   run('moah', ['init'], env);
   run('moah', ['index'], env);
   assert.match(run('moah', ['pi', '--help'], env), /moah/i);
