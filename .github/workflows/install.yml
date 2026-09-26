@@ -1,0 +1,40 @@
+name: Verify installation
+on:
+  push:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+      - run: npm install -g pnpm@10
+      - run: node tests/install-smoke.mjs
+      - name: Shell installer
+        if: runner.os != 'Windows'
+        shell: bash
+        env:
+          MOAH_INSTALL_DIR: ${{ runner.temp }}/moah-shell
+          MOAH_NO_PATH_UPDATE: '1'
+        run: |
+          sh -n install.sh
+          sh install.sh
+          "$MOAH_INSTALL_DIR/bin/moah" pi --help
+      - name: PowerShell installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          MOAH_INSTALL_DIR: ${{ runner.temp }}\moah-powershell
+          MOAH_NO_PATH_UPDATE: '1'
+        run: |
+          ./install.ps1
+          & "$env:MOAH_INSTALL_DIR\moah.cmd" pi --help
