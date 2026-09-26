@@ -32,6 +32,17 @@ jobs:
           cd "$RUNNER_TEMP/shell-project"
           "$MOAH_INSTALL_DIR/bin/moah" init
           "$MOAH_INSTALL_DIR/bin/moah" pi --help
+          # Verify persistent PATH quoting and repeated installation in a disposable home.
+          export HOME="$RUNNER_TEMP/moah home"
+          mkdir -p "$HOME"
+          export SHELL=/bin/bash
+          export MOAH_NO_PATH_UPDATE=0
+          cd "$GITHUB_WORKSPACE"
+          sh install.sh
+          sh install.sh
+          test "$(grep -c '^export PATH=' "$HOME/.profile")" = 1
+          test "$(grep -c '^export PATH=' "$HOME/.bashrc")" = 1
+          sh -c '. "$HOME/.profile"; moah about'
       - name: PowerShell installer
         if: runner.os == 'Windows'
         shell: pwsh
@@ -44,3 +55,15 @@ jobs:
           Set-Location "$env:RUNNER_TEMP\powershell-project"
           & "$env:MOAH_INSTALL_DIR\moah.cmd" init
           & "$env:MOAH_INSTALL_DIR\moah.cmd" pi --help
+          Set-Location "$env:GITHUB_WORKSPACE"
+          $savedPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+          try {
+            $env:MOAH_NO_PATH_UPDATE = '0'
+            powershell.exe -NoProfile -NonInteractive -Command "& './install.ps1'"
+            if ($LASTEXITCODE -ne 0) { throw 'Windows PowerShell 5.1 installer failed' }
+            ./install.ps1
+            $entries = [Environment]::GetEnvironmentVariable('Path', 'User') -split ';'
+            if (@($entries | Where-Object { $_ -eq $env:MOAH_INSTALL_DIR }).Count -ne 1) { throw 'PATH entry missing or duplicated' }
+          } finally {
+            [Environment]::SetEnvironmentVariable('Path', $savedPath, 'User')
+          }
