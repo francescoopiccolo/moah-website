@@ -23,7 +23,10 @@ for (const manager of ['npm', 'pnpm', 'bun']) {
   mkdirSync(bin, { recursive: true });
   const env = { ...process.env, PATH: `${bin}${win ? ';' : ':'}${process.env.PATH}` };
   if (manager === 'npm') run('npm', ['install', '-g', '--prefix', prefix, '--no-audit', '--no-fund', 'moah-ai@latest'], env);
-  if (manager === 'pnpm') run('pnpm', ['add', '-g', '--global-dir', join(prefix, 'global'), '--global-bin-dir', bin, '--store-dir', join(prefix, 'store'), `moah-ai@${version}`], env);
+  if (manager === 'pnpm') {
+    env.PNPM_HOME = prefix;
+    run('pnpm', ['add', '-g', '--store-dir', join(prefix, 'store'), `moah-ai@${version}`], env);
+  }
   if (manager === 'bun') {
     env.BUN_INSTALL_GLOBAL_DIR = join(prefix, 'global');
     env.BUN_INSTALL_BIN = bin;
